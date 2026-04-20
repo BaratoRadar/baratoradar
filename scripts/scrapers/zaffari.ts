@@ -4,14 +4,28 @@ import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 
-const connectionString = process.env.DATABASE_URL;
-if (!connectionString) {
+const rawConnectionString = process.env.DATABASE_URL;
+if (!rawConnectionString) {
   throw new Error("DATABASE_URL não encontrada no .env");
 }
 
+function sanitizeDatabaseUrl(url: string): string {
+  return url
+    .replace(/([?&])sslmode=[^&]*/g, "$1")
+    .replace(/([?&])pgbouncer=true/g, "$1")
+    .replace(/([?&])uselibpqcompat=true/g, "$1")
+    .replace(/\?&/, "?")
+    .replace(/&&/g, "&")
+    .replace(/[?&]$/, "");
+}
+
+const connectionString = sanitizeDatabaseUrl(rawConnectionString);
+
 const pool = new Pool({
   connectionString,
-  ssl: { rejectUnauthorized: false },
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
 const prisma = new PrismaClient({
