@@ -17,13 +17,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
       - name: Instalar dependências
         run: npm install
 
       - name: Gerar Prisma Client
         run: npx prisma generate
+
+      - name: Mostrar host e porta do DATABASE_URL
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          node -e "const u=new URL(process.env.DATABASE_URL); console.log('HOST=' + u.hostname); console.log('PORT=' + (u.port || '(vazia)')); console.log('USER=' + u.username)"
 
       - name: Rodar scraper do Zaffari
         env:
