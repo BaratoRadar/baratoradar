@@ -26,12 +26,12 @@ jobs:
 
       - name: Mostrar host e porta do DATABASE_URL
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL_NEW }}
         run: |
           node -e "const u=new URL(process.env.DATABASE_URL); console.log('HOST=' + u.hostname); console.log('PORT=' + (u.port || '(vazia)')); console.log('USER=' + u.username)"
 
       - name: Rodar scraper do Zaffari
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL_NEW }}
           NODE_TLS_REJECT_UNAUTHORIZED: "0"
         run: npm run scrape:zaffari
